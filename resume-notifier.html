@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resume Upload Notifier</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:wght@700&display=swap');
+ 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #070710;
+      color: #f1f0ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+ 
+    .back-btn {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #c084fc;
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.3s;
+    }
+ 
+    .back-btn:hover { background: rgba(192,132,252,0.15); }
+ 
+    .box {
+      background: #13131f;
+      border: 1px solid #1e1e30;
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+ 
+    .icon { font-size: 3.5rem; margin-bottom: 1rem; }
+ 
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #c084fc, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+ 
+    .subtitle { color: #6b6b8a; font-size: 0.9rem; margin-bottom: 2rem; }
+ 
+    .upload-area {
+      border: 2px dashed #1e1e30;
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+ 
+    .upload-area:hover { border-color: #c084fc; background: rgba(192,132,252,0.05); }
+ 
+    .upload-area input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+ 
+    .upload-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+    .upload-area p { color: #6b6b8a; font-size: 0.9rem; }
+    .upload-area span { color: #c084fc; font-weight: 500; }
+ 
+    .file-info {
+      display: none;
+      background: rgba(192,132,252,0.08);
+      border: 1px solid rgba(192,132,252,0.2);
+      border-radius: 10px;
+      padding: 0.8rem 1.2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+      color: #c084fc;
+      text-align: left;
+    }
+ 
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #c084fc, #f472b6);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(192,132,252,0.3);
+    }
+ 
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(192,132,252,0.5); }
+ 
+    .rules {
+      margin-top: 2rem;
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      padding: 1.2rem;
+    }
+ 
+    .rules p { font-size: 0.82rem; color: #6b6b8a; margin-bottom: 0.5rem; }
+    .rules p span { color: #38bdf8; }
+ 
+    .popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+ 
+    .popup.show { display: flex; }
+ 
+    .popup-box {
+      background: #13131f;
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      width: 300px;
+      animation: popIn 0.3s ease;
+    }
+ 
+    .popup-box.success { border: 2px solid #4ade80; }
+    .popup-box.error { border: 2px solid #f87171; }
+ 
+    .popup-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .popup-box h2 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .popup-box.success h2 { color: #4ade80; }
+    .popup-box.error h2 { color: #f87171; }
+    .popup-box p { color: #6b6b8a; font-size: 0.88rem; margin-bottom: 1.5rem; }
+ 
+    .close-btn {
+      padding: 0.6rem 2rem;
+      border: none;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+ 
+    .success .close-btn { background: #4ade80; color: #070710; }
+    .error .close-btn { background: #f87171; color: #070710; }
+ 
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+ 
+  <a href="portfolio.html" class="back-btn">← Back to Portfolio</a>
+ 
+  <div class="box">
+    <div class="icon">📧</div>
+    <h1>Resume Notifier</h1>
+    <p class="subtitle">Upload your resume · Get instant email notification</p>
+ 
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" onchange="handleFile()" />
+      <div class="upload-icon">📨</div>
+      <p><span>Click to choose</span> your resume</p>
+      <p>PDF only · Max 2MB</p>
+    </div>
+ 
+    <div class="file-info" id="fileInfo"></div>
+ 
+    <button class="btn" onclick="uploadFile()">Submit Resume 🚀</button>
+ 
+    <div class="rules">
+      <p>✅ <span>Accepted:</span> PDF under 2MB → Success email sent</p>
+      <p>❌ <span>Rejected:</span> Over 2MB → Rejection email sent</p>
+      <p>📧 <span>Powered by:</span> AWS S3 + Lambda + SNS</p>
+    </div>
+  </div>
+ 
+  <!-- SUCCESS -->
+  <div class="popup" id="successPopup">
+    <div class="popup-box success">
+      <div class="popup-icon">✅</div>
+      <h2>Resume Received!</h2>
+      <p>Your resume has been submitted successfully! A confirmation email has been sent.</p>
+      <button class="close-btn" onclick="closePopup('successPopup')">Great!</button>
+    </div>
+  </div>
+ 
+  <!-- ERROR -->
+  <div class="popup" id="errorPopup">
+    <div class="popup-box error">
+      <div class="popup-icon">❌</div>
+      <h2>Upload Rejected!</h2>
+      <p id="errorMsg">File exceeds 2MB limit!</p>
+      <button class="close-btn" onclick="closePopup('errorPopup')">Try Again</button>
+    </div>
+  </div>
+ 
+  <script>
+    const MAX_SIZE = 2 * 1024 * 1024;
+ 
+    function handleFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return;
+      const info = document.getElementById('fileInfo');
+      info.style.display = 'block';
+      info.innerHTML = `📄 ${file.name} &nbsp;|&nbsp; ${(file.size/1024).toFixed(2)} KB`;
+    }
+ 
+    function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return alert('Please choose a file first!');
+ 
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        document.getElementById('errorMsg').textContent = 'Only PDF files are allowed!';
+        document.getElementById('errorPopup').classList.add('show');
+        return;
+      }
+ 
+      if (file.size > MAX_SIZE) {
+        document.getElementById('errorMsg').textContent = `File is ${(file.size/1024/1024).toFixed(2)}MB — exceeds 2MB limit! Rejection email sent.`;
+        document.getElementById('errorPopup').classList.add('show');
+        return;
+      }
+ 
+      document.getElementById('successPopup').classList.add('show');
+    }
+ 
+    function closePopup(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+  </script>
+ 
+</body>
+</html>
+ 
