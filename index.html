@@ -667,7 +667,7 @@ async function fetchStatus() {
     
     document.getElementById('statusText').textContent = data.status || '🌟 Welcome!';
     
-    // Time ago
+   
     const unixTime = parseFloat(data.unix_time) * 1000;
     const now = Date.now();
     const diff = Math.floor((now - unixTime) / 1000);
